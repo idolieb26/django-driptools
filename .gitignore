@@ -1,0 +1,7 @@
+*.pyo
+*.pyc
+*~
+docs/
+media/
+apns/
+bk/

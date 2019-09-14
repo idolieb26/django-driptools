@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div>Signup Page</div>
+
+<form accept-charset="UTF-8" action="/signup/" class="singup-form" method="POST">
+    {% csrf_token %}
+    {% for field in form %}
+        <div class="row">
+            {{ field.label_tag }} {{ field }}
+            {{ field.errors }}
+            <!-- {% if field.help_text %}
+            <p class="help">{{ field.help_text|safe }}</p>
+            {% endif %} -->
+        </div>
+    {% endfor %}
+	<br>
+    <div class="submit">
+        <button type="submit">Submit</button>
+    </div>
+</form>
+<a href="{% url 'auth_login' %}">Login</a>
+{% endblock %}
