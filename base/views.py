@@ -32,7 +32,7 @@ def auth_login (request):
                 print(context, user)
                 if user is not None:
                     login(request, user)
-                    return redirect('/gmail_dashboard')
+                    return redirect('/gmail/dashboard')
 
         print(context)
         return render(request, 'login.html', context)
@@ -51,7 +51,7 @@ def auth_signup (request):
         if signup_form.is_valid():
             model_instance = signup_form.save(password)
 
-            return redirect('/gmail_dashboard')
+            return redirect('/gmail/dashboard')
 
         return render(request, 'signup.html', context)
 
