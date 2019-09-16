@@ -41,9 +41,8 @@ def get_emails(count):
     service = build('gmail', 'v1', credentials=creds)
     
     # Call the Gmail API to fetch INBOX
-    results = service.users().messages().list(userId='me',labelIds = ['INBOX']).execute()
+    results = service.users().messages().list(userId='me', labelIds = ['INBOX']).execute()
     messages = results.get('messages', [])
-    import pdb
 
     if not messages:
         print "No messages found."
@@ -51,13 +50,16 @@ def get_emails(count):
         print "Message snippets:"
         for message in messages[:count]:
             msg = service.users().messages().get(userId='me', id=message['id']).execute()
-            pdb.set_trace()
-            print msg['snippet']
+            # print("---------------------\n")
+            # for header in msg['payload']['headers']:
+            #     print(header['name'], " ****** ", header['value'], "\n")
+            # print("********************\n")
+            print(msg['snippet'], "\n")
 
     return True
 
 
 def dashboard(request):
-    emails = get_emails(1)
+    emails = get_emails(10)
 
     return JsonResponse({ 'status': emails })
