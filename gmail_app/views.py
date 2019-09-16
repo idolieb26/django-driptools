@@ -3,8 +3,7 @@ from __future__ import unicode_literals
 
 import pickle
 import os.path
-from django.shortcuts import render
-from django.http.response import JsonResponse
+from dateutil import parser
 
 from httplib2 import Http
 from googleapiclient.discovery import build
@@ -12,7 +11,12 @@ from oauth2client import file, client, tools
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
+from django.shortcuts import render
+from django.http.response import JsonResponse
+
 from driptools.settings import BASE_DIR
+from .models import EmailItem
+import pdb
 
 # Create your views here.
 SCOPES = 'https://www.googleapis.com/auth/gmail.readonly'
@@ -49,17 +53,31 @@ def get_emails(count):
     else:
         print "Message snippets:"
         for message in messages[:count]:
-            msg = service.users().messages().get(userId='me', id=message['id']).execute()
-            # print("---------------------\n")
-            # for header in msg['payload']['headers']:
-            #     print(header['name'], " ****** ", header['value'], "\n")
-            # print("********************\n")
-            print(msg['snippet'], "\n")
+            msg = service.users().messages().get(userId='me', id=message['id'], format='raw').execute()
+            pdb.set_trace()
+            date_obj = msg['payload']['headers']['Date']
+            dt = parser.parse(date_obj)
+            from_val =  msg['payload']['headers']['From']
+            from_email = from_val.split('<')[1].strip().replae('>', '')
+            if from_email == 'room_11338055278317226023464745705696@upwork.com':
+                pdb.set_trace()
+            # email_item = EmailItem(from_username=from_val.split('<')[0].strip(),
+            #                         from_email=from_val.split('<')[1].strip().replae('>', ''),
+            #                         to_email=msg['payload']['headers']['Delivered-To'],
+            #                         subject=msg['payload']['headers']['Subject'],
+            #                         preview_text=msg['payload']['headers']['snippet'],
+            #                         body_text= '',
+            #                         day_of_week= dt.weekday,
+            #                         time_of_day=dt.time,
+            #                         date_sent=dt.date)
+            # email_item.save()
+
+            # print(msg['snippet'], "\n")
 
     return True
 
 
 def dashboard(request):
-    emails = get_emails(10)
+    emails = get_emails(1000)
 
     return JsonResponse({ 'status': emails })
