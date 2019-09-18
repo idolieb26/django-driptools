@@ -22,19 +22,19 @@ def auth_login (request):
         context['form'] = login_form
 
         if login_form.is_valid():
-            user = BaseUser.objects.get(email=email)
-            if not user:
-                context['error'] = 'User doesn\'t exists! with that email'
-            else:
-                user = authenticate(username=email, password=password)
-                context['error'] = 'Password is wrong!'
+            try:
+                user = BaseUser.objects.get(email=email)
+            except:
+                context['error'] = 'User doesn\'t exists with given email!'
+                return render(request, 'login.html', context)
 
-                print(context, user)
-                if user is not None:
-                    login(request, user)
-                    return redirect('/gmail/dashboard')
+            user = authenticate(username=email, password=password)
+            context['error'] = 'Password is wrong!'
 
-        print(context)
+            if user is not None:
+                login(request, user)
+                return redirect('/gmail/dashboard')
+
         return render(request, 'login.html', context)
 
     login_form = BaseLoginForm()
@@ -51,7 +51,7 @@ def auth_signup (request):
         if signup_form.is_valid():
             model_instance = signup_form.save(password)
 
-            return redirect('/gmail/dashboard')
+            return redirect('auth_login')
 
         return render(request, 'signup.html', context)
 

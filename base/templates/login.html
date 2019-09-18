@@ -1,9 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div>login Page</div>
-
-<form accept-charset="UTF-8" action="/login/" method="POST">
+<!-- <form accept-charset="UTF-8" action="/login/" method="POST">
     {% csrf_token %}
     {% for field in form %}
         <div class="fieldWrapper">
@@ -18,5 +16,50 @@
         <button type="submit">Login</button>
     </div>
 </form>
-<a href="{% url 'auth_signup' %}">Sign Up</a>
+<a href="{% url 'auth_signup' %}">Sign Up</a> -->
+<div class="section-fullscreen bg-image" style="background-image: url({% static 'images/background.jpg)">
+    <div class="bg-black-04">
+        <div class="container text-center">
+            <div class="position-middle">
+                <div class="row">
+                    <div class="col-12 col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-4 offset-lg-4">
+                        <h4 class="font-weight-light margin-bottom-30">Enter your login</h4>
+                        <div>
+                        {% if error %}
+                            <div class="alert alert-danger">
+                                <strong>{{ error|escape }}</strong>
+                            </div>
+                        {% endif %}
+                        </div>
+                        <form accept-charset="UTF-8" action="/login/" method="POST">
+                            {% csrf_token %}
+                            {% for field in form %}
+                                <div class="fieldWrapper">
+                                    {{ field }}
+                                    {{ field.errors }}
+                                    {% if field.help_text %}
+                                    <p class="help">{{ field.help_text|safe }}</p>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                            <button type="submit" class="button-lg button-outline-white-2 button-fullwidth">Login</button>
+                        </form>
+                          <div class="margin-top-30">
+                              <ul class="list-unstyled">
+                                  <li><a href="#">Forgot username or password?</a></li>
+                                  <li><a href="/signup">Create account</a></li>
+                              </ul>
+                          </div>
+                      </div>
+                  </div><!-- end row -->
+              </div>
+              <!-- end position-middle -->
+              <div class="position-bottom text-center">
+                  <p>&copy; 2018 FlaTheme, All Rights Reserved.</p>
+              </div><!-- end position-bottom -->
+          </div><!-- end container -->
+      </div>
+    </div>
 {% endblock %}
+
+{% block javascript %}{% endblock %}

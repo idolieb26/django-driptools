@@ -7,12 +7,26 @@ from base.models import BaseUser
 
 
 class BaseSignupForm(ModelForm):
-    password = forms.CharField(widget=forms.TextInput(attrs={"type": "password"}), required=True)
-    confirm_password = forms.CharField(widget=forms.TextInput(attrs={"type": "password"}), required=True)
+    username = forms.CharField(
+        widget=forms.TextInput(attrs={"type": "text",
+                                        "placeholder": "Username"}),
+        required=True)
+    email = forms.EmailField(
+        widget=forms.TextInput(attrs={"type": "text",
+                                        "placeholder": "Email"}),
+        required=True)
+    password = forms.CharField(
+        widget=forms.TextInput(attrs={"type": "password",
+                                        "placeholder": "Password"}),
+        required=True)
+    confirm_password = forms.CharField(
+        widget=forms.TextInput(attrs={"type": "password",
+                                        "placeholder": "Conform password"}),
+        required=True)
 
     class Meta:
         model = BaseUser
-        fields = ['username', 'email', 'first_name', 'last_name', 'password',]
+        fields = ['username', 'email', 'password',]
 
     def clean_username(self):
         username = self.cleaned_data['username']
@@ -29,7 +43,7 @@ class BaseSignupForm(ModelForm):
     def clean(self):
         password = self.cleaned_data['password']
         confirm_password = self.cleaned_data['confirm_password']
-        required_fields = ['first_name', 'last_name']
+        required_fields = []
 
         for field in required_fields:
             if not self.cleaned_data.get(field):
@@ -52,8 +66,14 @@ class BaseSignupForm(ModelForm):
 
 
 class BaseLoginForm(forms.Form):
-    email = forms.EmailField(required=True)
-    password = forms.CharField(widget=forms.TextInput(attrs={"type": "password"}), required=True)
+    email = forms.EmailField(
+        widget=forms.TextInput(attrs={"type": "text",
+                                        "placeholder": "Email"}),
+        required=True)
+    password = forms.CharField(
+        widget=forms.TextInput(attrs={"type": "password",
+                                        "placeholder": "Password"}),
+        required=True)
 
     def clean(self):
         password = self.cleaned_data['password']
