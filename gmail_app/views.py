@@ -23,6 +23,8 @@ from .models import EmailItem
 import imaplib
 import email
 
+from .tasks import add
+
 # imaplib module implements connection based on IMAPv4 protocol
 mail = imaplib.IMAP4_SSL('imap.gmail.com')
 
@@ -214,21 +216,24 @@ def get_emails_with_imap(user_email, password):
 def dashboard(request):
     emails = []
     # emails = get_emails(100)
-    all_emails = EmailItem.objects.all()
-    for email in all_emails:
-        emails.append({
-            'from_username': email.from_username,
-            'from_email': email.from_email,
-            'to_email': email.to_email,
-            'subject': email.subject,
-            'preview_text': email.preview_text,
-            'body_text': email.body_text,
-            'day_of_week': email.day_of_week,
-            'time_of_day': email.time_of_day,
-            'date_sent': email.date_sent
-        })
+    # all_emails = EmailItem.objects.all()
+    # for email in all_emails:
+    #     emails.append({
+    #         'from_username': email.from_username,
+    #         'from_email': email.from_email,
+    #         'to_email': email.to_email,
+    #         'subject': email.subject,
+    #         'preview_text': email.preview_text,
+    #         'body_text': email.body_text,
+    #         'day_of_week': email.day_of_week,
+    #         'time_of_day': email.time_of_day,
+    #         'date_sent': email.date_sent
+    #     })
 
-    return JsonResponse({ 'status': True, 'emails': emails })
+    sum = add.delay(5, 4)
+    print(sum)
+
+    return JsonResponse({ 'status': True, 'emails': [] })
 
 
 def get_emails_by_from(request):

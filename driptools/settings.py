@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'base',
     'gmail_app',
+    'djcelery', # django celery
 ]
 
 ACCOUNT_ADAPTER = 'base.adapters.UserAccountAdapter'
