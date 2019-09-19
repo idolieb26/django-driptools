@@ -13,6 +13,7 @@ DAY_STATUS =(
     (6, 'Sun'),
 )
 
+
 # Create your models here.
 class EmailItem(models.Model):
 	from_username = models.CharField(max_length=255, default="", blank=True, null=True)
@@ -28,3 +29,13 @@ class EmailItem(models.Model):
 	preview_word_count = models.IntegerField(blank=True, null=True)
 	body_word_count = models.IntegerField(blank=True, null=True)
 	date_sent = models.DateField(default="", blank=True)
+	created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True, null=True)
+
+
+class Event(models.Model):
+	name = models.CharField(max_length=255, default="", blank=True, null=True)
+	event_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+	status = models.BooleanField(default=False, blank=True, null=True)
+	created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True, null=True)
