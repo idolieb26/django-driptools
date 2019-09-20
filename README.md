@@ -3,17 +3,21 @@
 ## How to set up environment
 1. Install dependencies:
 ```bash
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
 2. Setup redis server
 
+1) linux
 ```bash
 wget http://download.redis.io/redis-stable.tar.gz
 tar xvzf redis-stable.tar.gz
 cd redis-stable
 make
 ```
+2) [MacOs](
+https://medium.com/@petehouston/install-and-config-redis-on-mac-os-x-via-homebrew-eb8df9a4f298)
+
 3. Set up RabitMQ server
 
 1) Installing RabbitMQ on Ubuntu 16.04
@@ -63,12 +67,15 @@ Unfortunately I don’t have access to a Windows computer to try things out, but
 
 For other operating systems, check the [Downloading and Installing RabbitMQ on their Website](https://www.rabbitmq.com/download.html).
 
+4. [Install nltk library](https://nltk.readthedocs.io/en/latest/install.html)
+
+
 ## How to run app
 1. Run the django app
 ```bash
-python manage.py runserver
+python3 manage.py runserver
 ```
-2. Run celery brokers
+2. Open new tab in terminal and Run celery brokers
 ```bash
 celery -A driptools worker -l info
 ```
