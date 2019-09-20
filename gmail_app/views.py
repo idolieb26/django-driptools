@@ -16,14 +16,14 @@ from google.auth.transport.requests import Request
 
 from django.shortcuts import render
 from django.http.response import JsonResponse
+from django.contrib.auth.decorators import login_required
 
 from driptools.settings import BASE_DIR
-from .models import EmailItem
+from .models import EmailItem, Event
 
 import imaplib
-import email
 
-from .tasks import add
+from .tasks import add, get_emails_task
 
 # imaplib module implements connection based on IMAPv4 protocol
 mail = imaplib.IMAP4_SSL('imap.gmail.com')
@@ -52,7 +52,7 @@ def GetMimeMessage(service, user_id, msg_id):
     message = service.users().messages().get(userId=user_id, id=msg_id,
                                              format='raw').execute()
 
-    print 'Message snippet: %s' % message['snippet']
+    print ('Message snippet: %s' % message['snippet'])
 
     msg_str = base64.urlsafe_b64decode(message['raw'].encode('ASCII'))
 
@@ -60,7 +60,7 @@ def GetMimeMessage(service, user_id, msg_id):
 
     return mime_msg
   except error:
-    print 'An error occurred: %s' % error
+    print ('An error occurred: %s' % error)
 
 def get_emails(count):
     creds = None
@@ -89,9 +89,9 @@ def get_emails(count):
     messages = results.get('messages', [])
 
     if not messages:
-        print "No messages found."
+        print("No messages found.")
     else:
-        print "Message snippets:"
+        print("Message snippets:")
         for message in messages[:count]:
             msg = service.users().messages().get(userId='me',
                                                 id=message['id'],
@@ -213,9 +213,10 @@ def get_emails_with_imap(user_email, password):
     return context
 
 
+@login_required
 def dashboard(request):
     emails = []
-    # emails = get_emails(100)
+
     # all_emails = EmailItem.objects.all()
     # for email in all_emails:
     #     emails.append({
@@ -230,23 +231,25 @@ def dashboard(request):
     #         'date_sent': email.date_sent
     #     })
 
-    sum = add.delay(5, 4)
-    print(sum)
-
-    return JsonResponse({ 'status': True, 'emails': [] })
+    return render(request, 'dashboard.html', { 'status': True })
 
 
+@login_required
 def get_emails_by_from(request):
     # from_address = request.POST.get('from', None)
     # password = request.POST.get('password', None)
     from_address = 'newdavid5836@gmail.com'
     password = 'welcome8536'
-    res = get_emails_with_imap(from_address, password)
+    res = { 'status': True }
 
-    if res['status'] == False:
-        return JsonResponse(res)
+    task_id = get_emails_task.delay(from_address, password)
+    # obj, created = Event.objects.get_or_create(name='save emails to db',
+    #                                             uuid=task_id)
 
-    filterd_emails = EmailItem.objects.filter(from_email=from_address)
-    res['emails'] = list(filterd_emails)
+    # if res['status'] == False:
+    #     return JsonResponse(res)
+
+    # filterd_emails = EmailItem.objects.filter(from_email=from_address)
+    # res['emails'] = list(filterd_emails)
 
     return JsonResponse(res)
