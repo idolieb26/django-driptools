@@ -146,6 +146,7 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_URL = '/media/'
 
+# Custom configurations
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
@@ -168,4 +169,17 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Africa/Nairobi'
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
+# EMAIL_HOST = 'smtp-relay.gmail.com'   # smtp.zoho.com
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'newdavid5836@gmail.com'
+# EMAIL_HOST_PASSWORD = 'welcome8536'
+
+DEFAULT_FROM_EMAIL = 'support@glassfrogg.com'
+EMAIL_HOST = 'smtp.mailgun.org'   # smtp.zoho.com
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'postmaster@mg.glassfrogg.com'
+EMAIL_HOST_PASSWORD = 'c0d3219724865bdcd017d87cec80f7c2-afab6073-c4307b53'
