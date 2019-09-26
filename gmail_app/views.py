@@ -7,6 +7,7 @@ from dateutil import parser
 import email
 import base64
 import json
+from datetime import datetime
 
 from httplib2 import Http
 from googleapiclient.discovery import build
@@ -20,13 +21,14 @@ from django.contrib.auth.decorators import login_required
 
 from driptools.settings import BASE_DIR
 from .models import EmailItem, Event
+from .tasks import add, get_emails_task
+from utils.utils import get_top_ngrams, get_word_count
 
 import imaplib
+import string
+import nltk
+from nltk import bigrams, trigrams, ngrams, word_tokenize, FreqDist
 
-from .tasks import add, get_emails_task
-
-# imaplib module implements connection based on IMAPv4 protocol
-mail = imaplib.IMAP4_SSL('imap.gmail.com')
 
 import pdb
 
@@ -151,49 +153,55 @@ def get_emails(count):
 
     return True
 
-
-
-def get_emails_with_imap(user_email, password):
+def get_emails_with_imap(user_email, password, search_email='upwork@e.upwork.com'):
+    mail = imaplib.IMAP4_SSL('imap.gmail.com')
     context = { 'status': True, 'msg': 'Get emails successfully' }
-    try:
-        mail.login(user_email, password)
+    # try:
+    mail.login(user_email, password)
 
-        mail.list() # Lists all labels in GMail
-        mail.select('inbox') # Connected to inbox.
+    mail.list() # Lists all labels in GMail
+    mail.select('inbox') # Connected to inbox.
 
-        result, data = mail.search(None, 'FROM', 'upwork@e.upwork.com')
-        # search and return uids instead
-        i = len(data[0].split()) # data[0] is a space separate string
-        for x in range(3):
-            latest_email_uid = data[0].split()[x] # unique ids wrt label selected
-            result, email_data = mail.uid('fetch', latest_email_uid, '(RFC822)')
-            # fetch the email body (RFC822) for the given ID
-            if email_data is None or email_data[0] is None:
+    result, data = mail.search(None, 'FROM', search_email)
+    # search and return uids instead
+    i = len(data[0].split()) # data[0] is a space separate string
+
+    # get emails
+    for x in range(10):
+        raw_email_string = None
+        latest_email_uid = data[0].split()[x] # unique ids wrt label selected
+        result, email_data = mail.uid('fetch', latest_email_uid, '(RFC822)')
+        # fetch the email body (RFC822) for the given ID
+        if email_data is None or email_data[0] is None:
+            continue
+
+        print('== new stage == \n')
+        raw_email_string = email_data[0][1]
+        # converts byte literal to string removing b''
+        email_message = email.message_from_string(raw_email_string.decode('utf-8'))
+
+        # this will loop through all the available multiparts in mail
+        email_content = ""
+        for part in email_message.walk():
+            print('type: ', part.get_content_type())
+            if part.get_content_type() == 'text/plain': # ignore attachments/html
+                body = part.get_payload(decode=True)
+                email_content = email_content + str(body)
+            else:
                 continue
+        
+        # parse attributes and save email into db
+        date_obj = email_message['Date']
+        dt = parser.parse(date_obj)
+        from_val = email_message['From']
+        from_username=from_val.split('<')[0].strip()
+        try:
+            from_email = from_val.split('<')[1].strip().replace('>', '')
+        except:
+            from_email = from_val
 
-            raw_email_string = email_data[0][1]
-            # converts byte literal to string removing b''
-            email_message = email.message_from_string(raw_email_string)
-
-            # this will loop through all the available multiparts in mail
-            email_content = ""
-            for part in email_message.walk():
-                if part.get_content_type() == 'text/plain': # ignore attachments/html
-                    body = part.get_payload(decode=True)
-                    email_content = str(body)
-                else:
-                    continue
-
-            # parse attributes and save email into db
-            date_obj = email_message['Date']
-            dt = parser.parse(date_obj)
-            from_val = email_message['From']
-            from_username=from_val.split('<')[0].strip()
-            try:
-                from_email = from_val.split('<')[1].strip().replace('>', '')
-            except:
-                from_email = from_val
-
+        # uni_words, bi_words, tri_words = get_top_ngrams(email_content)
+        try:
             obj, created = EmailItem.objects.get_or_create(
                                     from_username=from_username,
                                     from_email=from_email,
@@ -203,12 +211,62 @@ def get_emails_with_imap(user_email, password):
                                     body_text= str(email_content),
                                     day_of_week= dt.weekday(),
                                     time_of_day=dt.time(),
+                                    subject_word_count = get_word_count(email_message['Subject']),
+                                    preview_word_count = get_word_count(email_message['snippet']),
+                                    body_word_count = get_word_count(email_content),
                                     date_sent=dt.date())
+        except Exception as e:
+            print('Error get email: ', e)
+            raise Exception(e)
+        if created == False:
+            break
+    
+    # Analyze emails
+    # filtered_emails = EmailItem.objects.filter(from_email=search_email)
+    filtered_emails = EmailItem.objects.all()
+    report = dict()
+    last_date = None
+    max_interval_between_emails = 0 # days
+    subject_ngram_hash = {'unigram': {}, 'bigram': {}, 'trigram': {} }
+    preview_ngram_hash = {'unigram': {}, 'bigram': {}, 'trigram': {} }
+    body_ngram_hash = {'unigram': {}, 'bigram': {}, 'trigram': {} }
 
-            print(obj, created)
-    except Exception as e:
-        context['status'] = False
-        context['msg'] = e.message 
+    total_count = len(filtered_emails)
+    report['total'] = len(filtered_emails)
+    report['first_email_date'] = filtered_emails[total_count-1].created
+    report['email_sent_time'] = {}
+    report['email_sent_day'] = {}
+
+    for entry in filtered_emails:
+        try:
+            report['body_word_count'] = entry.body_word_count
+            entry_hour = entry.created.strftime("%-I_%p")
+            entry_week_day = entry.created.strftime("%A")
+            if entry_hour in report['email_sent_time']:
+                report['email_sent_time'][entry_hour] = report['email_sent_time'][entry_hour] + 1
+            else:
+                report['email_sent_time'][entry_hour] = 1
+            if entry_week_day in report['email_sent_day']:
+                report['email_sent_day'][entry_week_day] = report['email_sent_day'][entry_week_day] + 1
+            else:
+                report['email_sent_day'][entry_week_day] = 1
+
+            if last_date is not None:
+                delta = entry.created.date() - last_date.date()
+                delta_day = abs(delta.days)
+                if delta_day > max_interval_between_emails:
+                    max_interval_between_emails = delta_day
+
+            last_date = entry.created
+        except Exception as e:
+            print(e, 'calculation_error')
+            pdb.set_trace()
+
+    print(report, " # ", total_count)
+    # except Exception as e:
+    #     context['status'] = False
+    #     print(e)
+    #     # context['msg'] = e.message 
 
     return context
 
@@ -230,6 +288,11 @@ def dashboard(request):
     #         'time_of_day': email.time_of_day,
     #         'date_sent': email.date_sent
     #     })
+
+    from_address = 'newdavid5836@gmail.com'
+    password = 'welcome8536'
+    get_emails_with_imap(from_address, password)
+
 
     return render(request, 'dashboard.html', { 'status': True })
 

@@ -7,6 +7,10 @@ from dateutil import parser
 import base64
 import json
 from .models import EmailItem
+import string
+import nltk
+from nltk import bigrams
+from nltk import trigrams
 
 from celery import Celery, shared_task
 from celery.utils.log import get_task_logger
@@ -79,18 +83,30 @@ def get_emails_task(user_email, password):
             except:
                 from_email = from_val
 
-            obj, created = EmailItem.objects.get_or_create(
-                                    from_username=from_username,
-                                    from_email=from_email,
-                                    to_email=email_message['Delivered-To'],
-                                    subject=email_message['Subject'],
-                                    preview_text=email_message['snippet'],
-                                    body_text= str(email_content),
-                                    day_of_week= dt.weekday(),
-                                    time_of_day=dt.time(),
-                                    date_sent=dt.date())
+            # # split the texts into tokens
+            # text = email_content.translate(str.maketrans('', '', string.punctuation + string.digits))
+            # tokens = nltk.word_tokenize(text)
+            # tokens = [token.lower() for token in tokens if len(token) > 1] #same as unigrams
+            # uni_tokens = list(ngrams(text, 1))
+            # fdist = FreqDist(uni_tokens)
+            # bi_tokens = bigrams(tokens)
+            # tri_tokens = trigrams(tokens)
 
-            logger.info('{}======{}'.format(obj, created))
+            # # print trigrams count
+            # print [(item, tri_tokens.count(item)) for item in sorted(set(tri_tokens))]
+
+            # obj, created = EmailItem.objects.get_or_create(
+            #                         from_username=from_username,
+            #                         from_email=from_email,
+            #                         to_email=email_message['Delivered-To'],
+            #                         subject=email_message['Subject'],
+            #                         preview_text=email_message['snippet'],
+            #                         body_text= str(email_content),
+            #                         day_of_week= dt.weekday(),
+            #                         time_of_day=dt.time(),
+            #                         date_sent=dt.date())
+
+            # logger.info('{}======{}'.format(obj, created))
         return True
     except Exception as e:
         return False 
