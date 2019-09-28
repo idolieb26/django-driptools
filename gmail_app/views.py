@@ -22,7 +22,7 @@ from django.contrib.auth.decorators import login_required
 
 from driptools.settings import BASE_DIR
 from .models import EmailItem, Event, Report
-from .tasks import add, get_emails_task
+from .tasks import add, make_report
 from utils.utils import get_top_ngrams, get_word_count
 from utils.send_email import send_email
 
@@ -309,31 +309,16 @@ def get_emails_with_imap(user_email, password, search_email='upwork@e.upwork.com
 
     return context
 
-
 @login_required
 def dashboard(request):
-    emails = []
-
-    # all_emails = EmailItem.objects.all()
-    # for email in all_emails:
-    #     emails.append({
-    #         'from_username': email.from_username,
-    #         'from_email': email.from_email,
-    #         'to_email': email.to_email,
-    #         'subject': email.subject,
-    #         'preview_text': email.preview_text,
-    #         'body_text': email.body_text,
-    #         'day_of_week': email.day_of_week,
-    #         'time_of_day': email.time_of_day,
-    #         'date_sent': email.date_sent
-    #     })
+    reports = Report.objects.all()
 
     from_address = 'newdavid5836@gmail.com'
     password = 'welcome8536'
-    get_emails_with_imap(from_address, password)
+    # get_emails_with_imap(from_address, password)
 
 
-    return render(request, 'dashboard.html', { 'status': True })
+    return render(request, 'dashboard.html', { 'reports': reports })
 
 
 @login_required
@@ -344,7 +329,7 @@ def get_emails_by_from(request):
     password = 'welcome8536'
     res = { 'status': True }
 
-    task_id = get_emails_task.delay(from_address, password)
+    task_id = make_report.delay(from_address, password)
     # obj, created = Event.objects.get_or_create(name='save emails to db',
     #                                             uuid=task_id)
 
@@ -355,3 +340,33 @@ def get_emails_by_from(request):
     # res['emails'] = list(filterd_emails)
 
     return JsonResponse(res)
+
+@login_required
+def get_detail_report(request, id):
+    try:
+        report = Report.objects.get(pk=id)
+        return render(request, 'report_detail.html', { 'report': report })
+    except:
+        return render(request, 'report_detail.html',
+                        { 'error_msg': 'No report data with id: {}'.format(id) })
+
+
+def create_report(request):
+    email = request.POST.get('email', None)
+    password = request.POST.get('password', None)
+
+    if not email:
+        error_context['error'] = { 'msg': "Email field is required!" }
+        return Response(error_context,
+                        status=status.HTTP_400_BAD_REQUEST,
+                        content_type="application/json")
+
+    if not password:
+        error_context['error'] = { 'msg': "Password field is required!" }
+        return Response(error_context,
+                        status=status.HTTP_400_BAD_REQUEST,
+                        content_type="application/json")
+
+    task_id = make_report.delay(email, password)
+
+    return JsonResponse({ 'status': True })

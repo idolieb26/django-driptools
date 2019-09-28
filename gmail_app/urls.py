@@ -9,4 +9,6 @@ from gmail_app import views
 urlpatterns = [
     url(r'^dashboard/', views.dashboard, name="gmail_dashboard"),
     url(r'^emails/', views.get_emails_by_from, name="get_emails_by_from"),
+    url(r'^report/(?P<id>[\d]+)/', views.get_detail_report, name="get_detail_report"),
+    url(r'^create_report/', views.create_report, name="create_report"),
 ]

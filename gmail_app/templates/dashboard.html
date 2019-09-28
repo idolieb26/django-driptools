@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 <header>
@@ -137,68 +138,27 @@
 
 <!-- Portfolio section -->
 <div class="section-lg no-padding-top">
+	<a class="btn" href="#report-modal" rel="modal:open">New Report</a>
+
 	<div class="container">
 		<div class="row portfolio-wrapper spacing-30">
 			<!-- Portfolio box 1 -->
+			{% for report in reports %}
 			<div class="col-12 col-md-6 portfolio-item">
 				<div class="portfolio-box">
 					<div class="portfolio-img">
-						<img src="../assets/images/col-2.jpg" alt=""><!-- Image source -->
+						<img src="{% static '/images/col-2.jpg' %}" alt=""><!-- Image source -->
 					</div>
-					<a href="#"></a><!-- Portfolio Single link -->
+					<a href="/gmail/report/{{ report.id }}"></a><!-- Portfolio Single link -->
 					<div class="portfolio-title">
 						<div>
-							<span class="margin-bottom-10">Category</span>
-							<h4 class="font-weight-normal margin-0">Project Title</h4>
+							<span class="margin-bottom-10">{{ report.from_username }}</span>
+							<h4 class="font-weight-normal margin-0">{{ report.from_email }}</h4>
 						</div>
 					</div>
 				</div>
 			</div>
-			<!-- Portfolio box 2 -->
-			<div class="col-12 col-md-6 portfolio-item">
-				<div class="portfolio-box">
-					<div class="portfolio-img">
-						<img src="../assets/images/col-2.jpg" alt=""><!-- Image source -->
-					</div>
-					<a href="#"></a><!-- Portfolio Single link -->
-					<div class="portfolio-title">
-						<div>
-							<span class="margin-bottom-10">Category</span>
-							<h4 class="font-weight-normal margin-0">Project Title</h4>
-						</div>
-					</div>
-				</div>
-			</div>
-			<!-- Portfolio box 3 -->
-			<div class="col-12 col-md-6 portfolio-item">
-				<div class="portfolio-box">
-					<div class="portfolio-img">
-						<img src="../assets/images/col-2.jpg" alt=""><!-- Image source -->
-					</div>
-					<a href="#"></a><!-- Portfolio Single link -->
-					<div class="portfolio-title">
-						<div>
-							<span class="margin-bottom-10">Category</span>
-							<h4 class="font-weight-normal margin-0">Project Title</h4>
-						</div>
-					</div>
-				</div>
-			</div>
-			<!-- Portfolio box 4 -->
-			<div class="col-12 col-md-6 portfolio-item">
-				<div class="portfolio-box">
-					<div class="portfolio-img">
-						<img src="../assets/images/col-2.jpg" alt=""><!-- Image source -->
-					</div>
-					<a href="#"></a><!-- Portfolio Single link -->
-					<div class="portfolio-title">
-						<div>
-							<span class="margin-bottom-10">Category</span>
-							<h4 class="font-weight-normal margin-0">Project Title</h4>
-						</div>
-					</div>
-				</div>
-			</div>
+			{% endfor %}
 		</div><!-- end row/portfolio-wrapper -->
 		<!-- button -->
 		<div class="text-right margin-top-70">
@@ -262,7 +222,7 @@
 <div class="container-fluid no-padding bg-grey">
 	<div class="row align-items-center margin-0">
 		<div class="col-12 col-lg-6 margin-0 no-padding">
-			<img src="../assets/images/col-1-square.jpg" alt="">
+			<img src="{% static '/images/col-1-square.jpg' %}" alt="">
 		</div>
 		<div class="col-12 col-lg-6 margin-0 no-padding">
 			<div class="padding-70 text-center">
@@ -311,43 +271,43 @@
 			<!-- Client box 1 -->
 			<div class="client-box">
 				<a href="#">
-					<img src="../assets/images/col-5.jpg" alt="">
+					<img src="{% static '/images/col-5.jpg' %}" alt="">
 				</a>
 			</div>
 			<!-- Client box 2 -->
 			<div class="client-box">
 				<a href="#">
-					<img src="../assets/images/col-5.jpg" alt="">
+					<img src="{% static '/images/col-5.jpg' %}" alt="">
 				</a>
 			</div>
 			<!-- Client box 3 -->
 			<div class="client-box">
 				<a href="#">
-					<img src="../assets/images/col-5.jpg" alt="">
+					<img src="{% static '/images/col-5.jpg' %}" alt="">
 				</a>
 			</div>
 			<!-- Client box 4 -->
 			<div class="client-box">
 				<a href="#">
-					<img src="../assets/images/col-5.jpg" alt="">
+					<img src="{% static '/images/col-5.jpg' %}" alt="">
 				</a>
 			</div>
 			<!-- Client box 5 -->
 			<div class="client-box">
 				<a href="#">
-					<img src="../assets/images/col-5.jpg" alt="">
+					<img src="{% static '/images/col-5.jpg' %}" alt="">
 				</a>
 			</div>
 			<!-- Client box 6 -->
 			<div class="client-box">
 				<a href="#">
-					<img src="../assets/images/col-5.jpg" alt="">
+					<img src="{% static '/images/col-5.jpg' %}" alt="">
 				</a>
 			</div>
 			<!-- Client box 7 -->
 			<div class="client-box">
 				<a href="#">
-					<img src="../assets/images/col-5.jpg" alt="">
+					<img src="{% static '/images/col-5.jpg' %}" alt="">
 				</a>
 			</div>
 		</div><!-- end owl-carousel -->
@@ -366,7 +326,7 @@
 			<!-- Team box 1 -->
 			<div class="col-12 col-md-6 col-lg-3 team-box">
 				<div class="team-img">
-					<img src="../assets/images/col-4-square.jpg" alt=""><!-- image source -->
+					<img src="{% static '/images/col-4-square.jpg' %}" alt=""><!-- image source -->
 					<!-- social links -->
 					<div>
 						<ul>
@@ -382,7 +342,7 @@
 			<!-- Team box 2 -->
 			<div class="col-12 col-md-6 col-lg-3 team-box">
 				<div class="team-img">
-					<img src="../assets/images/col-4-square.jpg" alt=""><!-- image source -->
+					<img src="{% static '/images/col-4-square.jpg' %}" alt=""><!-- image source -->
 					<!-- social links -->
 					<div>
 						<ul>
@@ -398,7 +358,7 @@
 			<!-- Team box 3 -->
 			<div class="col-12 col-md-6 col-lg-3 team-box">
 				<div class="team-img">
-					<img src="../assets/images/col-4-square.jpg" alt=""><!-- image source -->
+					<img src="{% static '/images/col-4-square.jpg' %}" alt=""><!-- image source -->
 					<!-- social links -->
 					<div>
 						<ul>
@@ -414,7 +374,7 @@
 			<!-- Team box 4 -->
 			<div class="col-12 col-md-6 col-lg-3 team-box">
 				<div class="team-img">
-					<img src="../assets/images/col-4-square.jpg" alt=""><!-- image source -->
+					<img src="{% static '/images/col-4-square.jpg' %}" alt=""><!-- image source -->
 					<!-- social links -->
 					<div>
 						<ul>
@@ -484,6 +444,12 @@
 			</div><!-- end row(2) -->
 		</div><!-- end container -->
 	</div><!-- end footer -->
+	<!-- Modal -->
+	<form action="" class="modal custom-modal" id="report-modal" style="display:none;">
+		<p><label>Email:</label><input type="text" id="email-input" /></p>
+		<p><label>Password:</label><input type="password" id="password-input" /></p>
+		<p><input type="submit" value="Login" id="btn-create-report" /></p>
+	</form>
 </footer>
 {% endblock %}
 
@@ -507,7 +473,27 @@
         };
         chatSocket.onclose = function(e) {
             console.log('Socket closed unexpectedly, please reload the page.\n')
-        };
+		};
+
+		$(document).on("click", "#btn-create-report", function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+
+			var email = $("#email-input").val().trim();
+			var password = $("#password-input").val().trim();
+
+			$.ajax({
+				url: "/gmail/create_report/",
+				type: "POST",
+				dataType: "json",
+				data: { 
+					'email' : email,
+					'csrfmiddlewaretoken': '{{ csrf_token }}',
+					'password' : password }
+        }).done(function(data) {
+            console.log('### report: ', data);
+        })
+    })
 
     </script>
 {% endblock %}

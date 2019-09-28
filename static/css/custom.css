@@ -1,0 +1,9 @@
+.modal.custom-modal {
+    position: absolute;
+    left: 30%;
+    z-index: 9999;
+}
+
+.jquery-modal.blocker {
+    z-index: 9999;
+}

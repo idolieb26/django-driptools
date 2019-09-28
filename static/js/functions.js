@@ -375,22 +375,22 @@ $(function() {
   /*===============================================
     Portfolio
   ===============================================*/
-  $(".portfolio-wrapper").imagesLoaded(function() {
-    var $portfolioWrapper = $(".portfolio-wrapper").isotope({
-      itemSelector: ".portfolio-item",
-      transitionDuration: 300 // 0.3 second
-    });
-    var filter = $(".filter ul li");
+  // $(".portfolio-wrapper").imagesLoaded(function() {
+  //   var $portfolioWrapper = $(".portfolio-wrapper").isotope({
+  //     itemSelector: ".portfolio-item",
+  //     transitionDuration: 300 // 0.3 second
+  //   });
+  //   var filter = $(".filter ul li");
 
-    // Portfolio Filter //
-    filter.on("click", function() {
-      var filterValue = $(this).attr("data-filter");
-      $portfolioWrapper.isotope({ filter: filterValue });
+  //   // Portfolio Filter //
+  //   filter.on("click", function() {
+  //     var filterValue = $(this).attr("data-filter");
+  //     $portfolioWrapper.isotope({ filter: filterValue });
 
-      filter.removeClass("active");
-      $(this).addClass("active");
-    });
-  });
+  //     filter.removeClass("active");
+  //     $(this).addClass("active");
+  //   });
+  // });
 
 
   /*===============================================

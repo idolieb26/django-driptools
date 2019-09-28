@@ -1,7 +1,7 @@
 import json
 
 from channels.generic.websocket import WebsocketConsumer
-from .tasks import add, get_emails_task
+from .tasks import add, make_report
 
 class ChatConsumer(WebsocketConsumer):
     groups = ["events"]
