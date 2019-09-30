@@ -446,34 +446,46 @@
 	</div><!-- end footer -->
 	<!-- Modal -->
 	<form action="" class="modal custom-modal" id="report-modal" style="display:none;">
-		<p><label>Email:</label><input type="text" id="email-input" /></p>
-		<p><label>Password:</label><input type="password" id="password-input" /></p>
-		<p><input type="submit" value="Login" id="btn-create-report" /></p>
+		<p>
+			<label>Email:</label>
+			<input type="text" id="email-input" />
+		</p>
+		<p>
+			<label>Password:</label>
+			<input type="password" id="password-input" />
+		</p>
+		<p>
+			<label>Email to send:</label>
+			<input type="text" id="from-email-input" />
+		</p>
+		<p>
+			<input type="submit" value="Send" id="btn-create-report" />
+		</p>
 	</form>
 </footer>
 {% endblock %}
 
 {% block javascript %}
 	<script>
-        var wss_protocol = (window.location.protocol == 'https:') ? 'wss://': 'ws://';
-        var chatSocket = new WebSocket(
-            wss_protocol + window.location.host + '/ws/chat/'
-            );
-        chatSocket.onopen = function(e) {
-            console.log('Welcome to the Django Chatbot.\nPlease type `help` for the commands list.\n')    
-            chatSocket.send(JSON.stringify({
-	            'message': 'connected',
-	            'type': 'get_emails'
-	        }));
-        }
-        chatSocket.onmessage = function(e) {
-            var data = JSON.parse(e.data);
-            var message = data['message'];  
-            console.log(message + '\n');
-        };
-        chatSocket.onclose = function(e) {
-            console.log('Socket closed unexpectedly, please reload the page.\n')
-		};
+        // var wss_protocol = (window.location.protocol == 'https:') ? 'wss://': 'ws://';
+        // var chatSocket = new WebSocket(
+        //     wss_protocol + window.location.host + '/ws/chat/'
+        //     );
+        // chatSocket.onopen = function(e) {
+        //     console.log('Welcome to the Django Chatbot.\nPlease type `help` for the commands list.\n')    
+        //     chatSocket.send(JSON.stringify({
+	    //         'message': 'connected',
+	    //         'type': 'get_emails'
+	    //     }));
+        // }
+        // chatSocket.onmessage = function(e) {
+        //     var data = JSON.parse(e.data);
+        //     var message = data['message'];  
+        //     console.log(message + '\n');
+        // };
+        // chatSocket.onclose = function(e) {
+        //     console.log('Socket closed unexpectedly, please reload the page.\n')
+		// };
 
 		$(document).on("click", "#btn-create-report", function(e) {
 			e.preventDefault();
@@ -481,17 +493,19 @@
 
 			var email = $("#email-input").val().trim();
 			var password = $("#password-input").val().trim();
+			var from_email = $("#from-email-input").val().trim();
 
 			$.ajax({
 				url: "/gmail/create_report/",
 				type: "POST",
 				dataType: "json",
 				data: { 
-					'email' : email,
-					'csrfmiddlewaretoken': '{{ csrf_token }}',
-					'password' : password }
+					'csrfmiddlewaretoken'	: '{{ csrf_token }}',
+					'email' 				: email,
+					'from_email' 			: from_email,
+					'password' 				: password }
         }).done(function(data) {
-            console.log('### report: ', data);
+			console.log('### report: ', data);
         })
     })
 

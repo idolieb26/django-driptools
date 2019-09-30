@@ -66,3 +66,6 @@ def get_word_count(text):
     if tokens is None:
         return 0
     return len(set(tokens))
+
+def validate_username(val):
+    return val.replace('?=', '').replace('=?UTF-8?Q?', '')
