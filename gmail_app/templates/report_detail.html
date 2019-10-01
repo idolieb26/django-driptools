@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+<div class="container">
+    <lable>from_username: </lable>
+    <div>{{ report.from_username }}</div>
+    <lable>from_email: </lable>
+    <div>{{ report.from_email }}</div>
+    <lable>to_email: </lable>
+    <div>{{ report.to_email }}</div>
+    <lable>subject_top_3: </lable>
+    <div>{{ report.subject_top_3 }}</div>
+    <lable>preview_top_3: </lable>
+    <div>{{ report.preview_top_3 }}</div>
+    <lable>body_top_3: </lable>
+    <div>{{ report.body_top_3 }}</div>
+    <lable>link_top_3: </lable>
+    <div>{{ report.link_top_3 }}</div>
+    <lable>full_link_top_3: </lable>
+    <div>{{ report.full_link_top_3 }}</div>
+    <lable>emoji_top_3: </lable>
+    <div>{{ report.emoji_top_3 }}</div>
+    <lable>average_word_count: </lable>
+    <div>{{ report.average_word_count }}</div>
+    <lable>median_word_count: </lable>
+    <div>{{ report.median_word_count }}</div>
+    <lable>high_word_count: </lable>
+    <div>{{ report.high_word_count }}</div>
+    <lable>low_word_count: </lable>
+    <div>{{ report.low_word_count }}</div>
+    <lable>body_word_count: </lable>
+    <div>{{ report.body_word_count }}</div>
+    <lable>average_emails_per_week: </lable>
+    <div>{{ report.average_emails_per_week }}</div>
+    <lable>average_interval: </lable>
+    <div>{{ report.average_interval }}</div>
+    <lable>longest_interval: </lable>
+    <div>{{ report.longest_interval }}</div>
+    <lable>first_date: </lable>
+    <div>{{ report.first_date }}</div>
+    <lable>total: </lable>
+    <div>{{ report.total }}</div>
+    <lable>email_sent_time: </lable>
+    <div>{{ report.email_sent_time }}</div>
+    <lable>email_sent_day: </lable>
+    <div>{{ report.email_sent_day }}</div>
+    <lable>average_images: </lable>
+    <div>{{ report.average_images }}</div>
+    <lable>created: </lable>
+    <div>{{ report.created }}</div>
+</div>
+{% endblock %}
+
+{% block javascript %}
+{% endblock %}

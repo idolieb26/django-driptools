@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+# import asgi_redis
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -28,6 +29,8 @@ DEBUG = True
 ALLOWED_HOSTS = []
 AUTH_USER_MODEL = 'base.BaseUser'
 
+LOGIN_URL = "/login/"
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -39,6 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'base',
     'gmail_app',
+    'djcelery', # django celery
+    'channels',
 ]
 
 ACCOUNT_ADAPTER = 'base.adapters.UserAccountAdapter'
@@ -83,6 +88,17 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql_psycopg2', # 'django.db.backends.postgresql',
+    #     'NAME': 'driptools',
+    #     'USER': 'postgres',
+    #     'PASSWORD': 'postgres',
+    #     'HOST': 'localhost',
+    #     'PORT': '',
+    #     'TEST': {
+    #         'NAME': 'test_gf',
+    #     },
+    # }
 }
 
 
@@ -105,6 +121,11 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static")
+]
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
@@ -122,6 +143,46 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
-STATIC_URL = '/static/'
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static/')  # abs path on server
+STATIC_URL = '/static/'  # how to access from website
+
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_URL = '/media/'
+
+# Custom configurations
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('localhost', 6379)],
+        },
+        # "ROUTING": "driptools.routing.channel_routing"
+    }
+}
+
+ASGI_APPLICATION = "driptools.routing.application"
+
+# Celery settings
+# CELERY_TASK_ALWAYS_EAGER = True
+REDIS_URL = 'redis://localhost:6379'
+BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Africa/Nairobi'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# EMAIL_HOST = 'smtp-relay.gmail.com'   # smtp.zoho.com
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'newdavid5836@gmail.com'
+# EMAIL_HOST_PASSWORD = 'welcome8536'
+
+DEFAULT_FROM_EMAIL = 'support@glassfrogg.com'
+EMAIL_HOST = 'smtp.mailgun.org'   # smtp.zoho.com
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'postmaster@mg.glassfrogg.com'
+EMAIL_HOST_PASSWORD = 'c0d3219724865bdcd017d87cec80f7c2-afab6073-c4307b53'

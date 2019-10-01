@@ -1,0 +1,116 @@
+{% block header %}
+<header>
+    <!-- navbar -->
+    <nav class="navbar navbar-absolute"><!-- add 'navbar-dark/navbar-grey/navbar-transparent/navbar-transparent-dark' -->
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <h5>Mono</h5>
+            </a>
+            <ul class="nav"><!-- add 'dropdown-dark/dropdown-grey/dropdown-transparent/dropdown-transparent-dark' -->
+                <!-- Basic link -->
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Link Only</a>
+                </li>
+
+                <!-- Dropdown -->
+                <li class="nav-item nav-dropdown">
+                    <a class="nav-link" href="#">Dropdown</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Dropdown link 1</a></li>
+                        <li><a href="#">Dropdown link 2</a></li>
+                        <li><a href="#">Dropdown link 3</a></li>
+                        <li><a href="#">Dropdown link 4</a></li>
+                    </ul>
+                </li>
+
+                <!-- Sub Dropdown -->
+                <li class="nav-item nav-dropdown">
+                    <a class="nav-link" href="#">Sub Dropdown</a>
+                    <ul class="dropdown-menu">
+                        <li class="sub-dropdown">
+                            <a href="#">Subdropdown 1</a>
+                            <div class="sub-dropdown-menu">
+                                <a href="#">Subdropdown link 1</a>
+                                <a href="#">Subdropdown link 2</a>
+                                <a href="#">Subdropdown link 3</a>
+                                <a href="#">Subdropdown link 4</a>
+                            </div>
+                        </li>
+                        <li class="sub-dropdown">
+                            <a href="#">Subdropdown 2</a>
+                            <div class="sub-dropdown-menu">
+                                <a href="#">Subdropdown link 1</a>
+                                <a href="#">Subdropdown link 2</a>
+                                <a href="#">Subdropdown link 3</a>
+                                <a href="#">Subdropdown link 4</a>
+                            </div>
+                        </li>
+                        <li class="sub-dropdown">
+                            <a href="#">Subdropdown 3</a>
+                            <div class="sub-dropdown-menu">
+                                <a href="#">Subdropdown link 1</a>
+                                <a href="#">Subdropdown link 2</a>
+                                <a href="#">Subdropdown link 3</a>
+                                <a href="#">Subdropdown link 4</a>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+                
+                <!-- Mega Dropdown -->
+                <li class="nav-item nav-megadropdown">
+                    <a class="nav-link" href="#">Mega Menu</a>
+                    <div class="mega-menu">
+                        <div class="row">
+                            <!-- Mega menu column 1 -->
+                            <div class="col-12 col-lg-3">
+                                <h6 class="heading-uppercase margin-bottom-20">Themify Icons</h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="ti-check-box"></i><a href="#">Link 1</a></li>
+                                    <li><i class="ti-check-box"></i><a href="#">Link 2</a></li>
+                                    <li><i class="ti-check-box"></i><a href="#">Link 3</a></li>
+                                    <li><i class="ti-check-box"></i><a href="#">Link 4</a></li>
+                                </ul>
+                            </div>
+                            <!-- Mega menu column 2 -->
+                            <div class="col-12 col-lg-3">
+                                <h6 class="heading-uppercase margin-bottom-20">FontAwesome</h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="far fa-check-square"></i><a href="#">Link 1</a></li>
+                                    <li><i class="far fa-check-square"></i><a href="#">Link 2</a></li>
+                                    <li><i class="far fa-check-square"></i><a href="#">Link 3</a></li>
+                                    <li><i class="far fa-check-square"></i><a href="#">Link 4</a></li>
+                                </ul>
+                            </div>
+                            <!-- Mega menu column 3 -->
+                            <div class="col-12 col-lg-3">
+                                <h6 class="heading-uppercase margin-bottom-20">Basic</h6>
+                                <ul class="list-unstyled">
+                                    <li><a href="#">Link 1</a></li>
+                                    <li><a href="#">Link 2</a></li>
+                                    <li><a href="#">Link 3</a></li>
+                                    <li><a href="#">Link 4</a></li>
+                                </ul>
+                            </div>
+                            <!-- Mega menu column 4 -->
+                            <div class="col-12 col-lg-3">
+                                <h6 class="heading-uppercase margin-bottom-20">list-icon</h6>
+                                <ul class="list-icon list-icon-heart">
+                                    <li><a href="#">Link 1</a></li>
+                                    <li><a href="#">Link 2</a></li>
+                                    <li><a href="#">Link 3</a></li>
+                                    <li><a href="#">Link 4</a></li>
+                                </ul>
+                            </div>
+                        </div><!-- end row -->
+                    </div>
+                </li>
+            </ul><!-- end nav -->
+            <!-- Nav Toggle button -->
+            <button class="nav-toggle-btn">
+                <span class="lines"></span>
+            </button><!-- toggle button will show when screen resolution is less than 992px -->
+        </div><!-- end container -->
+    </nav><!-- end navbar -->
+</header>
+{% endblock %}
