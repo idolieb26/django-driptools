@@ -8,24 +8,70 @@
 		<tbody>
             <tr>
                 <td>Sender Name: </td>
-                <td>{{ from_username }}</td>
+                <td>{{ item.from_username }}</td>
             </tr>
             <tr>
                 <td>From: </td>
-                <td>{{ from_email }}</td>
+                <td>{{ item.from_email }}</td>
             </tr>
             <tr>
                 <td>To: </td>
-                <td>{{ to_email }}</td>
+                <td>{{ item.to_email }}</td>
             </tr>
             <tr>
                 <td>Total: </td>
-                <td>{{ total }}</td>
+                <td>{{ item.total }}</td>
             </tr>
             <tr>
                 <td>Date for first email: </td>
-                <td>{{ first_date|date:"l, j M Y" }}</td>
+                <td>{{ item.first_date|date:"l, j M Y" }}</td>
             </tr>
+            <tr>
+                <td>email_sent_time: </td>
+                <td>{{ item.email_sent_time }}</td>
+            </tr>
+            <tr>
+                <td>email_sent_day: </td>
+                <td>{{ item.email_sent_day }}</td>
+            </tr>
+            <tr>
+                <td>Subject top 3</td>
+                <td>1 word: {{subject_top_3.unigram }}, 2 words: {{subject_top_3.bigram}}, 3 words: {{subject_top_3.trigram}}</td>
+            </tr>
+            <tr>
+                <td>Preview top 3</td>
+                <td>1 word: {{preview_top_3.unigram }}, 2 words: {{preview_top_3.bigram}}, 3 words: {{preview_top_3.trigram}}</td>
+            </tr>
+            <tr>
+                <td>Body top 3</td>
+                <td>1 word: {{body_top_3.unigram }}, 2 words: {{body_top_3.bigram}}, 3 words: {{body_top_3.trigram}}</td>
+            </tr>
+            <tr>
+                <td>average_word_count: </td>
+                <td>{{ item.average_word_count}}</td>
+            <tr>
+                <td>median_word_count: </td>
+                <td>{{ item.median_word_count}}</td>
+            <tr>
+                <td>high_word_count: </td>
+                <td>{{ item.high_word_count}}</td>
+            <tr>
+                <td>low_word_count: </td>
+                <td>{{ item.low_word_count}}</td>
+            <tr>
+                <td>longest_interval: </td>
+                {% if item.longest_interval %}
+                <td>{{ item.longest_interval}} days</td>
+                {% else %}
+                <td></td>
+                {% endif %}
+            <tr>
+                <td>average_interval: </td>
+                {% if item.average_interval %}
+                <td>{{ item.average_interval}} days</td>
+                {% else %}
+                <td></td>
+                {% endif %}
 		</tbody>
 	</table>
 </body>

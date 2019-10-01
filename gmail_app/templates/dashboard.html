@@ -138,7 +138,9 @@
 
 <!-- Portfolio section -->
 <div class="section-lg no-padding-top">
-	<a class="btn" href="#report-modal" rel="modal:open">New Report</a>
+	<div style="padding-bottom: 15px;text-align: center;">
+		<a class="btn" href="#report-modal" rel="modal:open">New Report</a>
+	</div>
 
 	<div class="container">
 		<div class="row portfolio-wrapper spacing-30">
@@ -504,9 +506,18 @@
 					'email' 				: email,
 					'from_email' 			: from_email,
 					'password' 				: password }
-        }).done(function(data) {
-			console.log('### report: ', data);
-        })
+	        })
+	        .done(function(data) {
+				if (data.status == false) {
+					alert(data.error.msg)
+				} else {
+					$.modal.getCurrent().close();
+				}
+	        })
+	        .fail( function(xhr, textStatus, errorThrown) {
+		        const data = JSON.parse(xhr.responseText);
+		        alert(data.error.msg)
+		    });
     })
 
     </script>
