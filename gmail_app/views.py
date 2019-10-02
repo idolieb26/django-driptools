@@ -143,15 +143,6 @@ def get_emails(count):
 @login_required
 def dashboard(request):
     reports = Report.objects.all()
-    report_item = analyze('newsdigest@insideapple.apple.com')
-    # report_item = analyze('bot@rsocks.net')
-    print(report_item.subject_top_3)
-    print(report_item.preview_top_3)
-    print(report_item.body_top_3)
-    # if report_item:
-    #     send_email(report_item, ['collinvargo530@gmail.com'])
-    
-
     return render(request, 'dashboard.html', { 'reports': reports })
 
 
