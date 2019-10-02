@@ -67,6 +67,38 @@ Unfortunately I don’t have access to a Windows computer to try things out, but
 
 For other operating systems, check the [Downloading and Installing RabbitMQ on their Website](https://www.rabbitmq.com/download.html).
 
+4) Install RabitMQ on CentOS/Fedora
+```bash
+sudo yum install -y erlang
+sudo vim /etc/yum.repos.d/rabbitmq_rabbitmq-server.repo
+
+[rabbitmq_rabbitmq-server]
+name=rabbitmq_rabbitmq-server
+baseurl=https://packagecloud.io/rabbitmq/rabbitmq-server/el/7/$basearch
+repo_gpgcheck=1
+gpgcheck=0
+enabled=1
+gpgkey=https://packagecloud.io/rabbitmq/rabbitmq-server/gpgkey
+sslverify=1
+sslcacert=/etc/pki/tls/certs/ca-bundle.crt
+metadata_expire=300
+
+[rabbitmq_rabbitmq-server-source]
+name=rabbitmq_rabbitmq-server-source
+baseurl=https://packagecloud.io/rabbitmq/rabbitmq-server/el/7/SRPMS
+repo_gpgcheck=1
+gpgcheck=0
+enabled=1
+gpgkey=https://packagecloud.io/rabbitmq/rabbitmq-server/gpgkey
+sslverify=1
+sslcacert=/etc/pki/tls/certs/ca-bundle.crt
+metadata_expire=300
+```
+```bash
+sudo yum makecache -y --disablerepo='*' --enablerepo='rabbitmq_rabbitmq-server'
+sudo yum -y install rabbitmq-server
+```
+
 4. [Install nltk library](https://nltk.readthedocs.io/en/latest/install.html)
 
 
