@@ -43,8 +43,6 @@ DAYS =(
 )
 
 
-import pdb
-
 # Create your views here.
 SCOPES = [
     'https://www.googleapis.com/auth/gmail.readonly',
@@ -312,7 +310,6 @@ def analyze(email=None):
 
         except Exception as e:
             print(e)
-            pdb.set_trace()
 
     for key in email_sent_time:
         email_sent_time[key] = '{0:2f}'.format(
@@ -332,20 +329,19 @@ def analyze(email=None):
         subject_ngram_hash['trigram'] = validate_ngrams(subject_top_tri_words)
     except Exception as e:
         print(e)
-        pdb.set_trace()
     try:
         preview_ngram_hash['unigram'] = validate_ngrams(preview_top_uni_words)
         preview_ngram_hash['bigram'] = validate_ngrams(preview_top_bi_words)
         preview_ngram_hash['trigram'] = validate_ngrams(preview_top_tri_words)
-    except:
-        pdb.set_trace()
+    except Exception as e:
+        print(e)
 
     try:
         body_ngram_hash['unigram'] = validate_ngrams(body_top_uni_words)
         body_ngram_hash['bigram'] = validate_ngrams(body_top_bi_words)
         body_ngram_hash['trigram'] = validate_ngrams(body_top_tri_words)
-    except:
-        pdb.set_trace()
+    except Exception as e:
+        print(e)
 
 
     average_word_count = 0
