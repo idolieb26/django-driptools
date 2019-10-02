@@ -7,6 +7,7 @@ from dateutil import parser
 import email
 import base64
 import json
+import copy
 from datetime import datetime
 from decimal import *
 
@@ -144,7 +145,9 @@ def dashboard(request):
     reports = Report.objects.all()
     report_item = analyze('newsdigest@insideapple.apple.com')
     # report_item = analyze('bot@rsocks.net')
-    print(report_item)
+    print(report_item.subject_top_3)
+    print(report_item.preview_top_3)
+    print(report_item.body_top_3)
     # if report_item:
     #     send_email(report_item, ['collinvargo530@gmail.com'])
     
@@ -176,37 +179,41 @@ def create_report(request):
         error_context['error'] = { 'msg': "Password field is required!" }
         return JsonResponse(error_context, status=400)
 
+    mail = imaplib.IMAP4_SSL('imap.gmail.com')
+    try:
+        mail.login(email, password)
+    except Exception as e:
+        error_context['error'] = { 'msg': "Please check your email or password to search!" }
+        return JsonResponse(error_context, status=400)
+
     # task_id = make_report.delay(email, password, from_email, 'collinvargo530@gmail.com')
-    # task_id = make_report.delay(email, password, from_email, request.user.email)
+    task_id = make_report.delay(email, password, from_email, request.user.email)
 
     return JsonResponse({ 'status': True })
 
 # take second element for sort
-def take_second(elem):
+def take_count(elem):
     try:
         return elem['count']
     except Exception as e:
         raise Exception(e)
 
-def validate_ngrams(arr):
-    if arr is not None and len(arr) > 0:
-        arr.sort(key=take_second, reverse=True)
+def validate_ngrams(new_hash):
+    if new_hash is not None and len(new_hash.keys()) > 0:
+        arr = [{'text': key, 'count': new_hash[key]} for key in new_hash]
+        arr.sort(key=take_count, reverse=True)
         return arr[:3]
     else:
         return []
 
-def sum_arrays_without_duplicate(arr1, arr2):
-    sum_arr = arr1
-    for item2 in arr2:
-        if len(arr1) > 0:
-            for item1 in arr1:
-                if item1['text'] != item2['text']:
-                    print('during ==  ', item1['text'], item2['text'])
-                    sum_arr.append(item2)
-        else:
-            sum_arr=arr2
+def sum_arrays_without_duplicate(hash, arr):
+    new_hash = copy.deepcopy(hash)
+    for item in arr:
+        hash_key = item['text'].replace(' ', '_')
+        if hash_key not in new_hash and item['count'] != 0:
+            new_hash[hash_key] = item['count']
 
-    return sum_arr
+    return new_hash
 
 
 def analyze(email=None):
@@ -230,15 +237,15 @@ def analyze(email=None):
 
     email_sent_time = {}
     email_sent_day = {}
-    subject_top_uni_words = []
-    subject_top_bi_words = []
-    subject_top_tri_words = []
-    preview_top_uni_words = []
-    preview_top_bi_words = []
-    preview_top_tri_words = []
-    body_top_uni_words = []
-    body_top_bi_words = []
-    body_top_tri_words = []
+    subject_top_uni_words = {}
+    subject_top_bi_words = {}
+    subject_top_tri_words = {}
+    preview_top_uni_words = {}
+    preview_top_bi_words = {}
+    preview_top_tri_words = {}
+    body_top_uni_words = {}
+    body_top_bi_words = {}
+    body_top_tri_words = {}
     word_counts = []
     total_intervals = 0
 
@@ -318,15 +325,16 @@ def analyze(email=None):
 
     for key in email_sent_time:
         email_sent_time[key] = '{0:2f}'.format(
-            float(str(Decimal(email_sent_time[key] / total_count * 100))))
+            float(email_sent_time[key] / total_count * 100))
     
     for key in email_sent_day:
         email_sent_day[key] = '{0:2f}'.format(
-            float(str(Decimal(email_sent_day[key] / total_count * 100))))
+            float(email_sent_day[key] / total_count * 100))
 
     report['email_sent_day'] = email_sent_day
     report['email_sent_time'] = email_sent_time
 
+    print(subject_top_uni_words)
     try:
         subject_ngram_hash['unigram'] = validate_ngrams(subject_top_uni_words)
         subject_ngram_hash['bigram'] = validate_ngrams(subject_top_bi_words)
@@ -375,7 +383,7 @@ def analyze(email=None):
                         high_word_count=high_word_count,
                         low_word_count=low_word_count,
                         longest_interval=max_interval_between_emails,
-                        average_interval=total_intervals/report['total'],
+                        average_interval=int(total_intervals/report['total']),
                         first_date=report['first_date'])
 
     return report_item

@@ -9,6 +9,7 @@ import json
 from datetime import datetime
 from decimal import *
 import string
+import copy
 import nltk
 from nltk import bigrams, trigrams, ngrams, word_tokenize, FreqDist
 
@@ -44,25 +45,22 @@ def take_count(elem):
     except Exception as e:
         raise Exception(e)
 
-def validate_ngrams(arr):
-    if arr is not None and len(arr) > 0:
+def validate_ngrams(new_hash):
+    if new_hash is not None and len(new_hash.keys()) > 0:
+        arr = [{'text': key, 'count': new_hash[key]} for key in new_hash]
         arr.sort(key=take_count, reverse=True)
         return arr[:3]
     else:
         return []
 
-def sum_arrays_without_duplicate(arr1, arr2):
-    sum_arr = arr1
-    for item2 in arr2:
-        if len(arr1) > 0:
-            for item1 in arr1:
-                if item1['text'] != item2['text']:
-                    print('during ==  ', item1['text'], item2['text'])
-                    sum_arr.append(item2)
-        else:
-            sum_arr=arr2
+def sum_arrays_without_duplicate(hash, arr):
+    new_hash = copy.deepcopy(hash)
+    for item in arr:
+        hash_key = item['text'].replace(' ', '_')
+        if hash_key not in new_hash and item['count'] != 0:
+            new_hash[hash_key] = item['count']
 
-    return sum_arr
+    return new_hash
 
 
 def analyze(email=None):
@@ -86,15 +84,15 @@ def analyze(email=None):
 
     email_sent_time = {}
     email_sent_day = {}
-    subject_top_uni_words = []
-    subject_top_bi_words = []
-    subject_top_tri_words = []
-    preview_top_uni_words = []
-    preview_top_bi_words = []
-    preview_top_tri_words = []
-    body_top_uni_words = []
-    body_top_bi_words = []
-    body_top_tri_words = []
+    subject_top_uni_words = {}
+    subject_top_bi_words = {}
+    subject_top_tri_words = {}
+    preview_top_uni_words = {}
+    preview_top_bi_words = {}
+    preview_top_tri_words = {}
+    body_top_uni_words = {}
+    body_top_bi_words = {}
+    body_top_tri_words = {}
     word_counts = []
     total_intervals = 0
 
@@ -174,11 +172,11 @@ def analyze(email=None):
 
     for key in email_sent_time:
         email_sent_time[key] = '{0:2f}'.format(
-            Decimal(email_sent_time[key] / total_count * 100))
+            float(email_sent_time[key] / total_count * 100))
     
     for key in email_sent_day:
         email_sent_day[key] = '{0:2f}'.format(
-            Decimal(email_sent_day[key] / total_count * 100))
+            float(email_sent_day[key] / total_count * 100))
 
     report['email_sent_day'] = email_sent_day
     report['email_sent_time'] = email_sent_time
