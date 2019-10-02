@@ -15,6 +15,10 @@ tar xvzf redis-stable.tar.gz
 cd redis-stable
 make
 ```
+OR
+```bash
+sudo apt-get install redis-server
+```
 2) [MacOs](
 https://medium.com/@petehouston/install-and-config-redis-on-mac-os-x-via-homebrew-eb8df9a4f298)
 
