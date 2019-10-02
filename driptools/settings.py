@@ -26,7 +26,7 @@ SECRET_KEY = 'rgkyvf9f%bq7h1(l$t!hd$=0%sopkcj3yyz&np5bz$k*q0fl8y'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['http://34.219.65.81/', 'localhost']
+ALLOWED_HOSTS = ['34.219.65.81', 'localhost']
 AUTH_USER_MODEL = 'base.BaseUser'
 
 LOGIN_URL = "/login/"
@@ -144,7 +144,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'  # how to access from website
-STATIC_ROOT = '/home/ubuntu/driptools/static/'  # abs path on server
+STATIC_ROOT = '/home/ubuntu/driptools/newstatic/'  # abs path on server
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_URL = '/media/'
