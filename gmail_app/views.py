@@ -140,8 +140,8 @@ def get_emails(count):
 
 @login_required
 def dashboard(request):
-    reports = Report.objects.all()
-    return render(request, 'dashboard.html', { 'reports': reports })
+    # reports = Report.objects.all()
+    return render(request, 'dashboard.html')
 
 
 @login_required
