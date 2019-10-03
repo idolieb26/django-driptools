@@ -98,10 +98,10 @@ def analyze(email=None):
 
     for entry in filtered_emails:
         report['first_date'] = filtered_emails[total_count-1].created
+        report['from_username'] = entry.from_username
+        report['from_email'] = entry.from_email
+        report['to_email'] = entry.to_email
         try:
-            report['from_username'] = entry.from_username
-            report['from_email'] = entry.from_email
-            report['to_email'] = entry.to_email
             if entry.body_word_count:
                 report['body_word_count'] = report['body_word_count'] + \
                                             entry.body_word_count

@@ -6,3 +6,4 @@ media/
 apns/
 bk/
 credentials.json
+db.sqlite3
