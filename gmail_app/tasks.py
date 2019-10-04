@@ -222,13 +222,8 @@ def analyze(email=None):
 
     return report_item
 
-def get_emails_with_imap(user_email, password, search_email='upwork@e.upwork.com'):
-    mail = imaplib.IMAP4_SSL('imap.gmail.com')
+def get_emails_with_imap(mail, user_email, password, search_email='upwork@e.upwork.com'):
     context = { 'status': True, 'msg': 'Get emails successfully' }
-    # try:
-    mail.login(user_email, password)
-
-    mail.list() # Lists all labels in GMail
     mail.select('inbox') # Connected to inbox.
 
     # result, data = mail.search(None, ('Reply-to: "{}"'.format(search_email)))
@@ -255,7 +250,6 @@ def get_emails_with_imap(user_email, password, search_email='upwork@e.upwork.com
         # this will loop through all the available multiparts in mail
         email_content = ""
         for part in email_message.walk():
-            print('type: ', part.get_content_type())
             if part.get_content_type() == 'text/plain': # ignore attachments/html
                 body = part.get_payload(decode=True)
                 email_content = email_content + str(body)
@@ -294,6 +288,82 @@ def get_emails_with_imap(user_email, password, search_email='upwork@e.upwork.com
     
     return True
 
+
+def get_emails_by_api(service, search_email):  
+    # Call the Gmail API to fetch INBOX
+    results = service.users().messages().list(userId='me', 
+                                            labelIds = ['INBOX'],
+                                            q=search_email).execute()
+    messages = results.get('messages', [])
+
+    if not messages:
+        print("No messages found.")
+    else:
+        print("Message snippets:")
+        for message in messages:
+            msg = service.users().messages().get(userId='me',
+                                                id=message['id'],
+                                                metadataHeaders=[
+                                                    'Date',
+                                                    'From',
+                                                    'Delivered-To',
+                                                    'snippet'
+                                                ]).execute()
+            headers = dict()
+            for header in msg['payload']['headers']:
+                headers[header['name']] = header['value']
+
+            date_obj = headers['Date']
+            dt = parser.parse(date_obj)
+            from_val = headers['From']
+            from_username=from_val.split('<')[0].strip()
+            try:
+                from_email = from_val.split('<')[1].strip().replace('>', '')
+            except:
+                from_email = from_val
+
+            try:
+                detail_msg = service.users().messages().get(userId='me',
+                                                id=message['id'],
+                                                format="raw").execute()
+
+                message_body = ''
+                msg_str = base64.urlsafe_b64decode(detail_msg['raw'].encode('ASCII'))
+
+                email_message = email.message_from_string(msg_str.decode())
+                for parts in email_message.walk():
+                      if parts.get_content_type() == 'text/plain':
+                        parsed_msg = parts.get_payload(decode=True)
+                        try:
+                            message_body = message_body + parsed_msg.decode()
+                        except:
+                            message_body = message_body
+
+            except Exception as e:
+                print('Error when parsing: ', e)
+                message_body = ""
+
+            try:
+                obj, created = EmailItem.objects.get_or_create(
+                                        from_username=from_username,
+                                        from_email=from_email,
+                                        to_email=email_message['Delivered-To'],
+                                        subject=email_message['Subject'],
+                                        preview_text=email_message['snippet'],
+                                        body_text= message_body,
+                                        day_of_week= dt.weekday(),
+                                        time_of_day=dt.time(),
+                                        subject_word_count = get_word_count(email_message['Subject']),
+                                        preview_word_count = get_word_count(email_message['snippet']),
+                                        body_word_count = get_word_count(message_body),
+                                        date_sent=dt.date())
+            except Exception as e:
+                print('Error get email: ', e)
+                raise Exception(e)
+
+
+    return True
+
 @shared_task
 def add(channel_name, x, y):
     logger.info('{}==={}==={}'.format(channel_name, x, y))
@@ -303,9 +373,25 @@ def add(channel_name, x, y):
 
 
 @shared_task
-def make_report(email, password, from_email, to):
+def make_report(email, password, from_email, to, mailObj):
     try:
-        get_emails_with_imap(email, password, from_email)
+        get_emails_with_imap(mailObj, email, password, from_email)
+        report_item = analyze(from_email)
+        recipient_list = [to]
+        if report_item:
+
+            send_email(report_item, recipient_list)
+            logger.info('Sent email!!')
+    except Exception as e:
+
+        logger.info('Gmail_app task: {}'.format(e))
+        return False
+
+
+@shared_task
+def make_report_for_gmail(from_email, to, mailObj):
+    try:
+        get_emails_by_api(mailObj, from_email)
         report_item = analyze(from_email)
         recipient_list = [to]
         if report_item:
